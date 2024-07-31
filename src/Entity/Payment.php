@@ -7,6 +7,7 @@ use Brick\Money\Money;
 use Contributte\Comgate\Entity\Codes\CountryCode;
 use Contributte\Comgate\Entity\Codes\LangCode;
 use Contributte\Comgate\Entity\Codes\PaymentMethodCode;
+use Contributte\Comgate\Exceptions\LogicException;
 
 class Payment extends AbstractEntity
 {
@@ -44,6 +45,9 @@ class Payment extends AbstractEntity
 	/** @var string */
 	private $name;
 
+	/** @var string */
+	private $fullName;
+
 	/** @var string ISO 639-1 */
 	private $lang = LangCode::CS;
 
@@ -77,6 +81,7 @@ class Payment extends AbstractEntity
 		string $label,
 		string $refId,
 		string $email,
+		string $fullName,
 		string $method = PaymentMethodCode::ALL,
 		string $country = CountryCode::ALL,
 		string $lang = LangCode::CS
@@ -88,6 +93,7 @@ class Payment extends AbstractEntity
 		$p->label = $label;
 		$p->refId = $refId;
 		$p->email = $email;
+		$p->fullName = $fullName;
 		$p->method = $method;
 		$p->country = $country;
 		$p->lang = $lang;
@@ -257,6 +263,15 @@ class Payment extends AbstractEntity
 		$this->eetData = $eetData;
 	}
 
+	public function getFullName(): string
+	{
+		if ($this->fullName === null) {
+			throw new LogicException('FullName is required');
+		}
+
+		return $this->fullName;
+	}
+
 	/**
 	 * @return mixed[]
 	 */
@@ -269,6 +284,7 @@ class Payment extends AbstractEntity
 			'refId' => $this->refId,
 			'method' => $this->method,
 			'email' => $this->email,
+			'fullName' => $this->fullName,
 			'prepareOnly' => $this->prepareOnly ? 'true' : 'false',
 			'country' => $this->country,
 			'lang' => $this->lang,
